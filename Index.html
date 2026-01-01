@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>SYSTEM_INIT_0x7F3A...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #0a0a0a;
+      color: #00ff66;
+      font-family: 'Courier New', Consolas, monospace;
+      font-size: 14px;
+      overflow: hidden;
+    }
+    
+    .scanline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 255, 102, 0.03) 51%
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+      animation: scanline 8s linear infinite;
+      z-index: 10;
+    }
+    
+    @keyframes scanline {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100%; }
+    }
+    
+    .terminal {
+      padding: 30px;
+      height: 100vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    
+    .line {
+      opacity: 0;
+      animation: fadeIn 0.3s forwards;
+      margin: 3px 0;
+    }
+    
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: #00ff66;
+      animation: blink 0.8s steps(2) infinite;
+      margin-left: 2px;
+    }
+    
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    
+    .warning {
+      color: #ff6600;
+      font-weight: bold;
+    }
+    
+    .error {
+      color: #ff0033;
+      font-weight: bold;
+    }
+    
+    .success {
+      color: #00ff66;
+    }
+    
+    .progress {
+      color: #ffff00;
+    }
+    
+    .header {
+      color: #00ccff;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    
+    .reveal {
+      color: #ffffff;
+      background: #1a1a1a;
+      border: 2px solid #00ff66;
+      padding: 30px;
+      margin: 20px 0;
+      border-radius: 8px;
+      text-align: center;
+      animation: revealPulse 1s ease-in-out;
+    }
+    
+    @keyframes revealPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    
+    .emoji {
+      font-size: 48px;
+      margin: 10px 0;
+    }
+    
+    .glitch {
+      animation: glitch 0.3s infinite;
+    }
+    
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      25% { transform: translate(-2px, 2px); }
+      75% { transform: translate(2px, -2px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="scanline"></div>
+  <div class="terminal" id="terminal"></div>
+
+  <script>
+    const terminal = document.getElementById("terminal");
+    let lineIndex = 0;
+
+    const sequence = [
+      { text: "╔═══════════════════════════════════════╗", delay: 100 },
+      { text: "║    SYSTEM ACCESS PROTOCOL v3.7.2     ║", delay: 100, class: "header" },
+      { text: "╚═══════════════════════════════════════╝", delay: 100 },
+      { text: "", delay: 300 },
+      { text: "> Initialisation du protocole...", delay: 500 },
+      { text: "> Établissement de la connexion sécurisée...", delay: 800 },
+      { text: "> Contournement du pare-feu... [OK]", delay: 700, class: "success" },
+      { text: "", delay: 200 },
+      { text: ">> SCAN DU PÉRIPHÉRIQUE", delay: 600, class: "header" },
+      { text: "   └─ Adresse IP: " + generateFakeIP(), delay: 400 },
+      { text: "   └─ Système: " + navigator.platform, delay: 400 },
+      { text: "   └─ Navigateur: " + getBrowserName(), delay: 400 },
+      { text: "   └─ Résolution: " + screen.width + "x" + screen.height, delay: 400 },
+      { text: "", delay: 300 },
+      { text: ">> ANALYSE DES PORTS", delay: 600, class: "header" },
+      { text: "   Port 22   [SSH]      OUVERT", delay: 300, class: "warning" },
+      { text: "   Port 80   [HTTP]    OUVERT", delay: 300, class: "warning" },
+      { text: "   Port 443  [HTTPS]   OUVERT", delay: 300, class: "warning" },
+      { text: "   Port 8080 [PROXY]   FERMÉ", delay: 300 },
+      { text: "", delay: 400 },
+      { text: ">> INJECTION DU PAYLOAD", delay: 700, class: "header" },
+      { text: "   [████████████████████] 100%", delay: 1200, class: "progress" },
+      { text: "", delay: 300 },
+      { text: ">> EXTRACTION DES DONNÉES", delay: 700, class: "header" },
+      { text: "   └─ Cookies: 47 fichiers", delay: 500 },
+      { text: "   └─ Historique: Accès en cours...", delay: 600 },
+      { text: "   └─ Mots de passe: ■■■■■■■■", delay: 700, class: "error" },
+      { text: "", delay: 500 },
+      { text: "⚠ ATTENTION: Activité suspecte détectée", delay: 800, class: "warning glitch" },
+      { text: "⚠ Tentative de traçage inversé...", delay: 900, class: "warning" },
+      { text: "", delay: 600 },
+      { text: ">> FINALISATION", delay: 700, class: "header" },
+      { text: "   Compression des données...", delay: 600 },
+      { text: "   Transfert vers le serveur distant...", delay: 800 },
+      { text: "   Effacement des traces...", delay: 700 },
+      { text: "", delay: 1000 },
+      { text: "✓ OPÉRATION TERMINÉE", delay: 500, class: "success" },
+      { text: "", delay: 1500 }
+    ];
+
+    function generateFakeIP() {
+      return Math.floor(Math.random() * 256) + "." +
+             Math.floor(Math.random() * 256) + "." +
+             Math.floor(Math.random() * 256) + "." +
+             Math.floor(Math.random() * 256);
+    }
+
+    function getBrowserName() {
+      const ua = navigator.userAgent;
+      if (ua.indexOf("Firefox") > -1) return "Firefox";
+      if (ua.indexOf("Chrome") > -1) return "Chrome";
+      if (ua.indexOf("Safari") > -1) return "Safari";
+      if (ua.indexOf("Edge") > -1) return "Edge";
+      return "Inconnu";
+    }
+
+    function addLine() {
+      if (lineIndex < sequence.length) {
+        const item = sequence[lineIndex];
+        const line = document.createElement("div");
+        line.className = "line " + (item.class || "");
+        line.textContent = item.text;
+        terminal.appendChild(line);
+        
+        terminal.scrollTop = terminal.scrollHeight;
+        lineIndex++;
+        setTimeout(addLine, item.delay);
+      } else {
+        setTimeout(reveal, 800);
+      }
+    }
+
+    function reveal() {
+      const revealDiv = document.createElement("div");
+      revealDiv.className = "reveal";
+      revealDiv.innerHTML = `
+        <div class="emoji">😂</div>
+        <h2 style="color: #00ff66; margin: 15px 0;">BLAGUE !</h2>
+        <p style="margin: 10px 0;">Aucune donnée n'a été consultée.</p>
+        <p style="margin: 10px 0;">Aucun accès, aucun piratage, aucun hack.</p>
+        <p style="margin: 10px 0;">Tout était faux du début à la fin.</p>
+        <hr style="border: 1px solid #00ff66; margin: 20px 0;">
+        <p style="color: #ffff00; font-size: 12px;">
+          Si tu lis ceci, tu t'es bien fait avoir ! 😄
+        </p>
+        <p style="margin-top: 15px;">Bonne journée ✌️</p>
+      `;
+      terminal.appendChild(revealDiv);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    // Démarrage
+    setTimeout(addLine, 500);
+
+    // Empêcher le clic droit pour l'effet
+    document.addEventListener('contextmenu', e => e.preventDefault());
+  </script>
+</body>
+  </html>
